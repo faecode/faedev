@@ -1,0 +1,11 @@
+{
+  "name": "@faedev/variant",
+  "version": "1.0.0",
+  "main": "/dist/index.ts",
+  "license": "MIT",
+  "private": false,
+  "peerDependencies": {
+    "@types/uuid": "^7.0.3",
+    "uuid": "^8.0.0"
+  }
+}
