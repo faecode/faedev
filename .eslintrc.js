@@ -29,6 +29,7 @@ module.exports = {
   },
   rules: {
     "react/prop-types": "off",
-    "import/no-extraneous-dependencies": ["error"],
+    "@typescript-eslint/explicit-function-return-type": ["off"],
+    "import/named": ["off"],
   },
 }

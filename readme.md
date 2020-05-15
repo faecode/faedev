@@ -3,6 +3,14 @@
 ## Development
 To add new package, just create directory withing monorepo and `yarn init` name your monorepo in format `@faedev/package-name`
 
+## Adding dependencies
+### Adding global development dependencies
+Install a new development dependency into monorepo root with `yarn add dependency -DW`
+### Adding global dependency
+Install a new dependency with `yarn add dependency`
+### Installing a package dependency
+To install a dependency related to a package use `yarn workspace @faedev/package-name add dependency
+
 ## Buliding
 To build all the packages run `yarn build`
 
