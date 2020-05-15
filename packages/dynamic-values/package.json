@@ -1,9 +1,11 @@
 {
   "name": "@faedev/dynamic-values",
   "version": "1.0.2",
+  "private": false,
   "main": "index.ts",
   "license": "MIT",
   "peerDependencies": {
     "react": "^16.13.1"
-  }
+  },
+  "gitHead": "6dc1d0786f40a9760f44e7fcb9a945b86ee9f6f6"
 }
