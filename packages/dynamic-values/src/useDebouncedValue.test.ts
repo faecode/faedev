@@ -1,5 +1,4 @@
-import createDynamicValue from "./createDynamicValue"
-import { renderHook, act } from "@testing-library/react-hooks"
+import { renderHook } from "@testing-library/react-hooks"
 import useComponentState from "./useComponentState"
 import useDebouncedValue from "./useDebouncedValue"
 
