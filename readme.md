@@ -1,7 +1,9 @@
 # A monorepo for FAE platform related open-source libraries
 
 ## Development
-To add new package, just create directory withing monorepo and `yarn init` name your monorepo in format `@faedev/package-name`
+To add new package:
+- have a hygen cli tool installed - npm intall -g hygen
+- run hygen package new package-name
 
 ## Adding dependencies
 ### Adding global development dependencies

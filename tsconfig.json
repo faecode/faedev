@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "noEmit": true,
-    "strict": true,
     "jsx": "react",
     "target": "esnext",
     "module": "esnext",
@@ -11,9 +10,14 @@
     "baseUrl": "./",
     "noImplicitAny": false,
     "paths": {
+      "@faedev/*": ["packages/*/src"],
       "*": ["node_modules", "packages"]
     }
   },
-  "include": ["packages"],
-  "exclude": ["node_modules"]
+  "awesomeTypescriptLoaderOptions": {
+    "useBabel": true,
+    "babelCore": "@babel/core"
+  },
+  "include": ["packages", "jest-dom/extend-expect"],
+  "exclude": ["node_modules", "dist","**/*.test.*"]
 }
