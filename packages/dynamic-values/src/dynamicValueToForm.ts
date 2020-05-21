@@ -1,5 +1,5 @@
-import DynamicValue from "./DynamicValue"
-import FormValue from "./FormValue"
+import { DynamicValue } from "./DynamicValue"
+import { FormValue } from "./FormValue"
 
 export default function dynamicValueToForm<T>(
   propertyName: "checked" | "value" | "selected" | "fileName",

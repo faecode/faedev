@@ -1,7 +1,7 @@
-import DynamicValue from "./DynamicValue"
-import FormValue, { FormTouched } from "./FormValue"
+import { DynamicValue } from "./DynamicValue"
+import { FormValue, FormTouched } from "./FormValue"
 
-export default function chainDynamicValue(
+export function chainDynamicValue(
   $value:
     | DynamicValue<{ [key: string]: unknown }>
     | FormValue<{ [key: string]: unknown }>,

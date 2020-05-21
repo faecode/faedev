@@ -1,4 +1,4 @@
-import V from "./index"
+import { V } from "./variant"
 
 export const catchIt = (fn: Function) => {
   return (...args: any) => {

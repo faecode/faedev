@@ -1,6 +1,5 @@
-import createDynamicValue from "./createDynamicValue"
 import { renderHook, act } from "@testing-library/react-hooks"
-import useComponentState from "./useComponentState"
+import { useComponentState } from "./useComponentState"
 
 describe("useDynamicValue hook", () => {
   it("should ", () => {

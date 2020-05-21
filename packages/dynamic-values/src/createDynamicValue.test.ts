@@ -1,4 +1,4 @@
-import createDynamicValue from "./createDynamicValue"
+import { createDynamicValue } from "./createDynamicValue"
 
 describe("createDynamicValue", () => {
   it("creates a simple value", () => {

@@ -1,6 +1,6 @@
-import DynamicValue from "./DynamicValue"
+import { DynamicValue } from "./DynamicValue"
 
-export default function createDynamicValue(
+export function createDynamicValue(
   input: any,
   change: (meta: unknown, value: any) => void,
 ) {

@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react"
 
-import DynamicValue from "./DynamicValue"
+import { DynamicValue } from "./DynamicValue"
 
-export default function useDebouncedValue<T>(dynamicValue: DynamicValue<T>): T {
+export function useDebouncedValue<T>(dynamicValue: DynamicValue<T>): T {
   const [state, onChange] = useState(dynamicValue.value)
 
   useEffect(() => {

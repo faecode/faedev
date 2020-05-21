@@ -1,6 +1,6 @@
 import { renderHook } from "@testing-library/react-hooks"
-import useComponentState from "./useComponentState"
-import useDebouncedValue from "./useDebouncedValue"
+import { useComponentState } from "./useComponentState"
+import { useDebouncedValue } from "./useDebouncedValue"
 
 describe("useDebouncedValue hook", () => {
   it("sets initial value", () => {

@@ -6,7 +6,7 @@ const checkVariantDefined = (variant: any) => {
   }
 }
 
-const V = {
+export const V = {
   type: function <T extends Variant>(variant: T): T[0] {
     checkVariantDefined(variant)
     return variant[0]
@@ -116,5 +116,3 @@ const V = {
     }
   },
 }
-
-export default V

@@ -1,6 +1,6 @@
-import V from "."
+import { V } from "./variant"
 
-function match<
+export function match<
   T extends [string, any] | [string],
   Obj extends Handler extends null | undefined
     ? { [K in T[0]]: (value: Extract<T, [K, any] | [K]>[1], type: K) => any }
@@ -29,11 +29,11 @@ function match<
       throw new Error(
         `type "${V.type(
           variant,
-        )}" is not in provided switchObject. Included types: ${availableKeys.join(", ")}`,
+        )}" is not in provided switchObject. Included types: ${availableKeys.join(
+          ", ",
+        )}`,
       )
     }
   }
   return fn(V.value(variant), V.type(variant))
 }
-
-export default match

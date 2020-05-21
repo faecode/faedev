@@ -1,4 +1,4 @@
-import DynamicValue from "./DynamicValue"
+import { DynamicValue } from "./DynamicValue"
 
 export type FormListErrors = { all?: string[]; each?: FormErrors[] }
 
@@ -13,7 +13,7 @@ export type FormTouched =
   | { [name: string]: FormTouched }
   | { any?: boolean; all?: boolean; each?: FormTouched[] }
 
-export default class FormValue<T> extends DynamicValue<T> {
+export class FormValue<T> extends DynamicValue<T> {
   touched: FormTouched
   touch: any
   error: FormErrors
