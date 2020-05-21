@@ -1,6 +1,6 @@
 {
   "name": "@faedev/variant",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "license": "MIT",
@@ -9,7 +9,9 @@
     "build:declaration": "tsc --project tsconfig.build.json",
     "build:es": "BABEL_ENV=build babel src --root-mode upward --out-dir dist --source-maps --extensions .ts,.tsx --delete-dir-on-start --no-comments"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "publishConfig": {
     "access": "public"
   }
