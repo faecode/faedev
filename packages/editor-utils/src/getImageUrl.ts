@@ -1,3 +1,3 @@
-export function getImageUrl(input: unknown) {
+export function getImageUrl(input: any): string {
   return input
 }
