@@ -5,5 +5,5 @@ import { createDynamicValue } from "./createDynamicValue"
 
 export function useComponentState<T>(initial: T): DynamicValue<T> {
   const [value, change] = useState<T>(initial)
-  return createDynamicValue(value, (meta, newValue) => change(newValue))
+  return createDynamicValue(value, (newValue) => change(newValue))
 }

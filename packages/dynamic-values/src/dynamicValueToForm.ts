@@ -56,7 +56,7 @@ export default function dynamicValueToForm<T>(
           onChange(param)
         }
 
-        return dynamicValue.change({}, getValue(param))
+        return dynamicValue.change(getValue(param))
       },
     }
   }

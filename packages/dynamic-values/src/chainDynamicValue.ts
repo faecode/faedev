@@ -30,8 +30,8 @@ export function chainDynamicValue(
 
     return new FormValue(
       $value.value[key],
-      function (meta: unknown, newInner: unknown) {
-        $value.change(meta, { ...$value.value, [key]: newInner })
+      function (newInner: unknown) {
+        $value.change({ ...$value.value, [key]: newInner })
       },
       touched,
       touch,
@@ -41,11 +41,8 @@ export function chainDynamicValue(
     )
   }
   if ($value instanceof DynamicValue) {
-    return new DynamicValue($value.value[key], function (
-      meta: unknown,
-      newInner: unknown,
-    ) {
-      $value.change(meta, { ...$value.value, [key]: newInner })
+    return new DynamicValue($value.value[key], function (newInner: unknown) {
+      $value.change({ ...$value.value, [key]: newInner })
     })
   }
 }

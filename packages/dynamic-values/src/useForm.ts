@@ -73,7 +73,7 @@ export function useForm<T>(
 
   return new FormValue(
     value,
-    (meta, newValue) => change(newValue),
+    (newValue) => change(newValue),
     touched,
     setTouched,
     validate(value, validator),

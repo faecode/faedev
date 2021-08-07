@@ -6,7 +6,7 @@ describe("useDynamicValue hook", () => {
     const { result } = renderHook(() => useComponentState(10))
     expect(result.current.value).toBe(10)
     act(() => {
-      result.current.change(null, 20)
+      result.current.change(20)
     })
     expect(result.current.value).toBe(20)
   })
