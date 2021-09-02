@@ -21,7 +21,7 @@ export class FormValue<T> extends DynamicValue<T> {
   setShowErrors: (show: boolean) => void
   constructor(
     value: T,
-    change: (meta: unknown, value: T) => void,
+    change: (value: T) => void,
     touched: FormTouched,
     touch: (touched: FormTouched) => void,
     error: FormErrors,

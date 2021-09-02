@@ -1,13 +1,10 @@
 {
-  "name": "@faedev/dynamic-values",
-  "version": "1.0.7",
-  "private": false,
+  "name": "@faedev/editor-utils",
+  "version": "1.0.8",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "license": "MIT",
-  "peerDependencies": {
-    "react": "^16.13.1"
-  },
+  "private": false,
   "files": [
     "dist"
   ],
@@ -15,8 +12,10 @@
     "build:declaration": "tsc --project tsconfig.build.json",
     "build:es": "BABEL_ENV=build babel src --root-mode upward --out-dir dist --source-maps --extensions .ts,.tsx --delete-dir-on-start --no-comments"
   },
-  "gitHead": "6dc1d0786f40a9760f44e7fcb9a945b86ee9f6f6",
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "@faedev/variant": "^1.0.4"
   }
 }
