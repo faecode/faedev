@@ -2,8 +2,8 @@ import React from "react"
 
 type Props = {
   source: any
-  style: any
-  className: any
+  style?: any
+  className?: any
 }
 
 function imageNominalToUrl(source: any): string {
