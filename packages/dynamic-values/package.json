@@ -1,7 +1,6 @@
 {
   "name": "@faedev/dynamic-values",
   "version": "1.0.7",
-  "private": false,
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "license": "MIT",
@@ -13,7 +12,14 @@
   ],
   "scripts": {
     "build:declaration": "tsc --project tsconfig.build.json",
-    "build:es": "BABEL_ENV=build babel src --root-mode upward --out-dir dist --source-maps --extensions .ts,.tsx --delete-dir-on-start --no-comments"
+    "build:es": "BABEL_ENV=build babel src --root-mode upward --out-dir dist --source-maps --extensions .ts,.tsx --delete-dir-on-start --no-comments",
+    "docz:dev": "docz dev",
+    "docz:build": "docz build",
+    "docz:serve": "docz build && docz serve"
+  },
+  "dependencies": {
+    "@material-ui/core": "^4.12.3",
+    "docz": "2.3.1"
   },
   "gitHead": "6dc1d0786f40a9760f44e7fcb9a945b86ee9f6f6",
   "publishConfig": {
