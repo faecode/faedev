@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-import { FormValue, FormErrors, FormListErrors, FormTouched } from "./FormValue"
+import { FormValue, FormErrors, FormListErrors, FormTouched } from "./DynamicValue"
 import { DynamicValue } from "./DynamicValue"
 
 export default function nonNullable<T>(value: T): value is NonNullable<T> {
@@ -11,11 +11,11 @@ const meta = {}
 
 type FormValidators =
   | {
-      all?: ((meta: any, value: unknown) => string)[]
+      all?: ((value: unknown) => string)[]
       each?: FormValidators
     }
   | { [name: string]: FormValidators }
-  | ((meta: any, value: unknown) => string)[]
+  | ((value: unknown) => string)[]
   | null
 
 function validate<Value>(value: Value, validators: FormValidators): FormErrors {
@@ -26,7 +26,7 @@ function validate<Value>(value: Value, validators: FormValidators): FormErrors {
     return validators
       .map((validator) => {
         if (typeof validator === "function") {
-          const res = validator(meta, value)
+          const res = validator(value)
 
           return res
         }
@@ -38,7 +38,7 @@ function validate<Value>(value: Value, validators: FormValidators): FormErrors {
     const each = validators.each
     const formListErrors: FormListErrors = {
       all: Array.isArray(validators.all)
-        ? validators.all.map((validator) => validator(meta, value))
+        ? validators.all.map((validator) => validator(value))
         : undefined,
       each: each
         ? value.map((item): FormErrors => validate(item, each))
@@ -62,7 +62,6 @@ function validate<Value>(value: Value, validators: FormValidators): FormErrors {
 }
 
 export function useForm<T>(
-  _,
   initial: T,
   validator: FormValidators = null,
 ): FormValue<T> | DynamicValue<T> {

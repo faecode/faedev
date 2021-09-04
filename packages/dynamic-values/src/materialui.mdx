@@ -1,0 +1,34 @@
+# Material UI example
+
+import { Playground } from "docz"
+import { useForm } from "./useForm"
+import { Button, TextField } from '@material-ui/core';
+
+## bind to input
+
+<Playground>
+  {() => {
+    function validateEmail(email) {
+        const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(String(email).toLowerCase());
+    }
+    const form = useForm({
+      name: "Hello", 
+      email: ""
+    }, {
+      name: [(val) => val === "" ? "Name is required" : null],
+      email: [(val) => validateEmail(val) ? null : "Email is not valid"]
+    })
+    return (
+      <>
+        <TextField label="Name" {...form.name.bind()} />
+        <TextField label="Email" {...form.email.bind()} />
+        <pre>
+        Value: {form.name.value}<br/>
+        Touched: {form.name.touched ? "no" : "yes"}<br/>
+        {JSON.stringify(form)}
+        </pre>
+      </>
+    )
+  }}
+</Playground>
