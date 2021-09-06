@@ -1,12 +1,54 @@
-export type PropertyName = "checked" | "value" | "selected" | "fileName"
+/* eslint-disable @typescript-eslint/ban-ts-ignore */
+/* eslint-disable @typescript-eslint/no-this-alias */
+/* eslint-disable @typescript-eslint/no-use-before-define */
+// type Meta = {
+//   local:
+//   global: { [key: string]: any }
+//   private: { [key: string]: any }
+// }
+type MetaValues = { [key: string]: unknown }
+type MetaValuesAny = { [key: string]: any }
+
+type NestedLocalMeta<Local extends MetaValues = MetaValuesAny> = {
+  [key: string | number]: { nested: NestedLocalMeta<Local>; local: Local }
+}
+
+export class Meta<
+  Local extends MetaValues = MetaValuesAny,
+  Global extends MetaValues = MetaValuesAny
+> {
+  constructor({
+    local,
+    nested,
+    global,
+  }: {
+    local: Local
+    nested?: NestedLocalMeta<Local>
+    global: Global
+  }) {
+    this.local = local
+    this.nested = nested
+    this.global = global
+    this.forEachLocal = (callback: (local: Local) => void) => {
+      // FIXME implement traversing over this and all nested, passing local in callback
+    }
+  }
+
+  nested?: NestedLocalMeta<Local>
+  local: Local
+  global: Global
+  forEachLocal: (callback: (local: Local) => void) => void
+}
+
 export class DynamicValue<T> {
   value: T
-  change: (value: T) => void
-  bind: (prop: PropertyName) => any
+  meta: Meta
+  change: (value: T, meta: Meta) => void
   map: <Z>(mappingFn: (d: T) => Z) => Z[]
-  constructor(value: T, change: (value: T) => void) {
+  constructor(value: T, meta: Meta, change: (value: T, meta: Meta) => void) {
     this.value = value
-    this.change = (newValue: T) => {
+    this.meta = meta
+    this.change = (newValue: T, newMeta: Meta) => {
       // TODO consider moving it to "bind", this should mostly solve problem of compatibility with form elements returning different type than passed
       if (typeof value === "number") {
         // @ts-ignore
@@ -15,23 +57,30 @@ export class DynamicValue<T> {
         // @ts-ignore
         change(Boolean(newValue))
       } else {
-        change(newValue)
-      } 
+        change(newValue, newMeta)
+      }
     }
     const that = this
-    this.bind = (prop = "value") => {
-      return dynamicValueToForm(prop, that)
-    }
     if (typeof value === "object") {
-      const customProps: {[key: string]: {get: () => any}} = Object.fromEntries(Object.keys(value).map((key) => {
-        return [key, ({get: () => {
-          return chainDynamicValue(that as DynamicValue<any>, key)
-        }})]
-      }))
-      
+      const customProps: {
+        [key: string]: { get: () => any }
+      } = Object.fromEntries(
+        Object.keys(value).map((key) => {
+          return [
+            key,
+            {
+              get: () => {
+                return chainDynamicValue(that as DynamicValue<any>, key)
+              },
+            },
+          ]
+        }),
+      )
+
       Object.defineProperties(this, customProps)
     }
-    this.map = (mappingFn) => universalEach(that as DynamicValue<any>, mappingFn)
+    this.map = (mappingFn) =>
+      universalEach(that as DynamicValue<any>, mappingFn)
   }
 }
 
@@ -48,150 +97,45 @@ export type FormTouched =
   | { [name: string]: FormTouched }
   | { any?: boolean; all?: boolean; each?: FormTouched[] }
 
-export class FormValue<T> extends DynamicValue<T> {
-  touched: FormTouched
-  touch: any
-  error: FormErrors
-  showErrors: boolean
-  setShowErrors: (show: boolean) => void
-  constructor(
-    value: T,
-    change: (value: T) => void,
-    touched: FormTouched,
-    touch: (touched: FormTouched) => void,
-    error: FormErrors,
-    showErrors: boolean,
-    setShowErrors: (show: boolean) => void,
-  ) {
-    super(value, change)
-    this.showErrors = showErrors
-    this.touched = touched
-    this.touch = touch
-    this.error = error
-    this.setShowErrors = setShowErrors
-  }
-}
-
-function dynamicValueToForm<T>(
-  propertyName: PropertyName,
-  dynamicValue: FormValue<T> | DynamicValue<T> | T,
-  onChange?: (value: T) => void,
-  eventParameter = true,
+function chainDynamicValue<V>(
+  value: DynamicValue<SimpleIterable<V>>,
+  key: string | number,
 ) {
-  const getValue = (param) => {
-    if (eventParameter) {
-      return param.target[propertyName]
-    }
-    return param
-  }
-
-  if (typeof dynamicValue === undefined || dynamicValue === null) {
-    return {
-      [propertyName]: propertyName === "checked" ? true : "value",
-      onChange: (param) => {
-        if (onChange) {
-          onChange(param)
-        }
-        alert(
-          `Attempted to change dynamic value, new value: '${String(
-            getValue(param),
-          )}'`,
-        )
-      },
-    }
-  }
-
-  if (dynamicValue && dynamicValue instanceof DynamicValue) {
-    const additionalProps = {}
-    if (dynamicValue instanceof FormValue) {
-      if (dynamicValue.touched === true || dynamicValue.showErrors) {
-        if (typeof dynamicValue.error === "string") {
-          additionalProps["error"] = dynamicValue.error
-        }
-        if (Array.isArray(dynamicValue.error)) {
-          additionalProps["error"] = dynamicValue.error[0]
-        }
-      }
-      additionalProps["onBlur"] = function () {
-        dynamicValue.touch(true)
-        // TODO pass to original event
-      }
-    }
-
-    return {
-      ...additionalProps,
-      [propertyName]: dynamicValue.value,
-      onChange: (param: any): void => {
-        if (onChange) {
-          // On change always keeps original event or value
-          onChange(param)
-        }
-
-        return dynamicValue.change(getValue(param))
-      },
-    }
-  }
-
-  return {
-    [propertyName]: dynamicValue,
-    onChange: (param: any): void => {
-      if (onChange) {
-        onChange(param)
-      }
-    },
-  }
-}
-
-function chainDynamicValue(
-  $value:
-    | DynamicValue<{ [key: string]: unknown }>
-    | FormValue<{ [key: string]: unknown }>,
-  key: string,
-) {
-  if ($value instanceof FormValue) {
-    const pureTouched = $value.touched
-    const { touch, touched } =
-      pureTouched && typeof pureTouched === "object"
-        ? {
-            touched: pureTouched[key],
-            touch: (newValue: FormTouched) => {
-              const newTouched = { ...pureTouched }
-              newTouched[key] = newValue
-              $value.touch(newTouched)
-            },
-          }
-        : {
-            touched: false,
-            touch: (newValue: FormTouched) => {
-              const newTouched: { [name: string]: FormTouched } = {}
-              newTouched[key] = newValue
-              $value.touch(newTouched)
-            },
-          }
-
-    return new FormValue(
-      $value.value[key],
-      function (newInner: unknown) {
-        $value.change({ ...$value.value, [key]: newInner })
-      },
-      touched,
-      touch,
-      $value.error && $value.error[key],
-      $value.showErrors,
-      $value.setShowErrors,
+  if (!(value instanceof DynamicValue)) {
+    throw new Error(
+      "chainDynamicValue doesn't accept other values than DynamicValue",
     )
   }
-  if ($value instanceof DynamicValue) {
-    return new DynamicValue($value.value[key], function (newInner: unknown) {
-      $value.change({ ...$value.value, [key]: newInner })
+  const nestedMeta = value.meta.nested
+  const meta = new Meta({
+    local: nestedMeta[key] ? nestedMeta[key].local : {},
+    nested: nestedMeta[key] ? nestedMeta[key].nested : {},
+    global: value.meta.global,
+  })
+  return new DynamicValue(value.value[key], meta, function change(
+    newInner: V,
+    newMeta: Meta,
+  ) {
+    const newKeyNested = {
+      local: newMeta.local,
+      nested: newMeta.nested,
+    }
+    const newParentMeta = new Meta({
+      local: value.meta.local,
+      global: newMeta.global,
+      nested: {
+        ...value.meta.nested,
+        [key]: newKeyNested,
+      },
     })
-  }
+    value.change({ ...value.value, [key]: newInner }, newParentMeta)
+  })
 }
 
 type SimpleIterable<V> = V[] | { [key: string]: V }
 
 export default function universalEach<V>(
-  target: DynamicValue<SimpleIterable<V>> | FormValue<SimpleIterable<V>>,
+  target: DynamicValue<SimpleIterable<V>>,
   callback: (item: any, key: any) => any,
 ) {
   if (target instanceof DynamicValue) {
@@ -199,75 +143,13 @@ export default function universalEach<V>(
 
     if (Array.isArray(pureValue)) {
       return pureValue.map((valueItem, key) => {
-        const change = (newValue: V) => {
-          const newTarget = [...pureValue]
-          newTarget[key] = newValue
-          target.change(newTarget)
-        }
-
-        let item: DynamicValue<V> | FormValue<V>
-        if (target instanceof FormValue) {
-          const pureTouched = target.touched
-          const { touch, touched } = Array.isArray(pureTouched)
-            ? {
-                touched: pureTouched[key],
-                touch: (newValue: FormTouched) => {
-                  const newTouched = [...pureTouched]
-                  newTouched[key] = newValue
-                  target.touch(newTouched)
-                },
-              }
-            : {
-                touched: false,
-                touch: (newValue: FormTouched) => {
-                  const newTouched: FormTouched[] = []
-                  newTouched[key] = newValue
-                  target.touch(newTouched)
-                },
-              }
-
-          // @ts-ignore
-          const eachError = target.error ? target.error.each : null
-          item = new FormValue(
-            valueItem,
-            change,
-            touched,
-            touch,
-            Array.isArray(eachError) ? eachError[key] : null,
-            target.showErrors,
-            target.setShowErrors,
-          )
-        } else {
-          item = new DynamicValue(valueItem, change)
-        }
+        const item = chainDynamicValue(target, key)
 
         return callback(item, key)
       })
     } else if (typeof target === "object") {
       return Object.entries(target.value).map(([key, valueItem]) => {
-        const change = (newValue: V) => {
-          if (typeof key === "string") {
-            const newTarget = { ...target.value }
-            newTarget[key] = newValue
-            target.change(newTarget)
-          }
-        }
-
-        const item =
-          target instanceof FormValue
-            ? new FormValue(
-                valueItem,
-                change,
-                false,
-                () => {
-                  throw new Error("iteration touch on map is not implemented yet")
-                },
-                // @ts-ignore
-                target.error.each[key],
-                target.showErrors,
-                target.setShowErrors,
-              )
-            : new DynamicValue(valueItem, change)
+        const item = chainDynamicValue(target, key)
 
         return callback(item, key)
       })

@@ -55,6 +55,21 @@ import { useComponentState } from "./useComponentState"
   }}
 </Playground>
 
+## Or use it completely same way as useState (maybe not needed)????
+<Playground>
+  {() => {
+    const [count, changeCount, $count] = useComponentState(0)
+    return (
+      <>
+        <button onClick={() => changeCount(count + 10)}>++</button>
+        <input type="number" {...bind($count)} />
+        <button onClick={() => changeCount(count - 10)}>--</button>
+        {count}
+      </>
+    )
+  }}
+</Playground>
+
 ## records
 
 <Playground>
