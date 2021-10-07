@@ -3,10 +3,10 @@ import { FormValue, FormTouched } from "./FormValue"
 
 export function chainDynamicValue(
   $value:
-    | DynamicValue<{ [key: string]: unknown }>
-    | FormValue<{ [key: string]: unknown }>,
+    | DynamicValue<{ [key: string]: any }>
+    | FormValue<{ [key: string]: any }>,
   key: string,
-) {
+): DynamicValue<any> {
   if ($value instanceof FormValue) {
     const pureTouched = $value.touched
     const { touch, touched } =
