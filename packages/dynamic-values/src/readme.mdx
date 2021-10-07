@@ -1,0 +1,173 @@
+# Dynamic Values (react-two-way)
+
+Like React.useState but smarter. With utilities for building complex forms.
+
+Based on two-way data binding concept.
+
+It provides
+
+- Easy to use forms
+- Infinite nesting
+- out of the box support for
+  - touched
+  - error (validate)
+  - label
+  - disabled
+- Easy to scale to very complex forms (multistep, conditional, hierarchical)
+- Usable for any type of data (not only forms)
+- async validations
+- contiuous backup to localStorage or remote
+- controlled
+- memoized???
+
+No magic html forms on background. Everything goes through value and onChange.
+
+import { Playground } from "docz"
+import { useComponentState } from "./useComponentState"
+
+
+## bind to input
+
+<Playground>
+  {() => {
+    const count = useComponentState(0)
+    return (
+      <>
+        <input type="number" {...count.bind()} />
+        {count.value}
+      </>
+    )
+  }}
+</Playground>
+
+## Simple Value
+
+<Playground>
+  {() => {
+    const count = useComponentState(0)
+    return (
+      <>
+        <button onClick={() => count.change(count.value + 10)}>++</button>
+        <button onClick={() => count.change(count.value - 10)}>--</button>
+        {count.value}
+      </>
+    )
+  }}
+</Playground>
+
+## Or use it completely same way as useState (maybe not needed)????
+<Playground>
+  {() => {
+    const [count, changeCount, $count] = useComponentState(0)
+    return (
+      <>
+        <button onClick={() => changeCount(count + 10)}>++</button>
+        <input type="number" {...bind($count)} />
+        <button onClick={() => changeCount(count - 10)}>--</button>
+        {count}
+      </>
+    )
+  }}
+</Playground>
+
+## records
+
+<Playground>
+
+{() => {
+    const person = useComponentState({
+        name: "John",
+        surname: "Doe",
+        age: 88,
+    })
+
+    return (
+        <>
+            <input type="text" {...person.name.bind()} />
+            <input type="text" {...person.surname.bind()} />
+            <input type="number" {...person.age.bind()} />
+            {JSON.stringify(person.value)}
+        </>
+    )
+
+}}
+
+</Playground>
+
+## Arrays
+
+<Playground>
+  {() => {
+    const todos = useComponentState([
+      {
+        title: "Buy a milk",
+        done: false,
+      },
+      {
+        title: "Walk a dog",
+        done: true,
+      },
+    ]);
+    return (
+      <div>
+        {todos.map((todo) => {
+          return (
+            <div>
+              <input type="text" {...todo.title.bind()} />
+              <input type="checkbox" {...todo.done.bind("checked")} />
+            </div>
+          );
+        })}
+        <button onClick={() => todos.change([...todos.value, { title: "", done: false}])}>
+            Add
+        </button>
+        <br />
+        {JSON.stringify(todos.value)}
+      </div>
+    )
+    }}
+</Playground>
+
+
+## errors, touched, labels, disabled
+
+```js
+const person = useForm({
+    name: {
+        default: "John",
+        label: "Name",
+        validate: () => {},
+    },
+    surname: {
+        default: "Doe",
+        label: "Surname",
+        validate: () => {}
+        disabled
+    },
+    age: 88,
+})
+
+<>
+    <Input type="text" {...person.name.bind()} />
+    <Input type="text" {...person.surname.bind()} />
+    <Input type="number" {...person.age.bind()} />
+    {JSON.stringify(person.value)}
+</>
+```
+
+## connect manually
+
+```js
+const person = useForm({
+    name: {
+        default: "John",
+        label: "Name",
+        validate: () => {},
+    },
+})
+
+<>
+    <Input type="text" {...person.bind()} />
+    <Input type="text" value={person.value} onChange={(e) => person.change(e.target.value)} />
+</>
+```

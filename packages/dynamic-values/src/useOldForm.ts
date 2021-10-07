@@ -1,6 +1,6 @@
 import { useState } from "react"
-import { useComponentState } from "../dist"
 
+import { FormValue, FormErrors, FormListErrors, FormTouched } from "./DynamicValue"
 import { DynamicValue } from "./DynamicValue"
 
 export default function nonNullable<T>(value: T): value is NonNullable<T> {
@@ -64,18 +64,19 @@ function validate<Value>(value: Value, validators: FormValidators): FormErrors {
 export function useForm<T>(
   initial: T,
   validator: FormValidators = null,
-): DynamicValue<T> {
-  const value = useComponentState(initial, {
-    onInit,
-    onChange: (value, meta) => {
-      // FIXME if anything inside is touched, set private prop someTouched to true
-      
-    },
-  })
+): FormValue<T> | DynamicValue<T> {
+  const [value, change] = useState<T>(initial)
+  const [touched, setTouched] = useState<FormTouched>(null)
+  // TODO need
+  const [showErrors, setShowErrors] = useState<boolean>(false)
 
-  return [value, formControls: {
-    showAllErrors: () => {
-      // FIXME mark global.showAllErrors = true
-    }
-  }]
+  return new FormValue(
+    value,
+    (newValue) => change(newValue),
+    touched,
+    setTouched,
+    validate(value, validator),
+    showErrors,
+    setShowErrors,
+  )
 }
