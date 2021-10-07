@@ -31,6 +31,16 @@ export class Meta<
     this.global = global
     this.forEachLocal = (callback: (local: Local) => void) => {
       // FIXME implement traversing over this and all nested, passing local in callback
+      callback(this.local)
+      function walkNested(nestedMap: NestedLocalMeta<Local>) {
+        for (const [key, nestedRecord] of Object.entries(nestedMap)) {
+          callback(nestedRecord.local)
+          walkNested(nestedRecord.nested)
+        }
+      }
+      if (this.nested) {
+        walkNested(this.nested)
+      }
     }
   }
 
